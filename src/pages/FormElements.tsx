@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,7 @@ import { FileUpload } from '@/components/ui/file-upload';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { AutocompleteInput } from '@/components/ui/autocomplete-input';
 import { useToast } from '@/hooks/use-toast';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { 
   Upload, 
   Calendar as CalendarIcon, 
@@ -41,9 +43,17 @@ import {
   Heart,
   Zap,
   Clock,
-  MapPin
+  MapPin,
+  Home,
+  ChevronRight,
+  Bell,
+  CheckCircle,
+  AlertCircle,
+  XCircle,
+  Info
 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 
 const FormElements = () => {
   const { toast } = useToast();
@@ -87,6 +97,7 @@ const FormElements = () => {
     searchableSelectValue: '',
     autocompleteValue: '',
     dateValue: undefined as Date | undefined,
+    dateRange: undefined as DateRange | undefined,
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -123,15 +134,41 @@ const FormElements = () => {
   };
 
   const showToast = (type: 'success' | 'error' | 'warning' | 'info', title: string, description: string) => {
-    toast({
+    const toastConfig = {
       title,
       description,
-      variant: type === 'error' ? 'destructive' : 'default',
-    });
+      variant: type === 'error' ? 'destructive' as const : 'default' as const,
+    };
+
+    toast(toastConfig);
   };
 
   return (
     <div className="space-y-8 animate-fade-in">
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/" className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Dashboard
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <ChevronRight className="h-4 w-4" />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/components">UI Components</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <ChevronRight className="h-4 w-4" />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbPage>Form Elements</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
@@ -144,7 +181,7 @@ const FormElements = () => {
       </div>
 
       <Tabs defaultValue="text-inputs" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 bg-muted/30 backdrop-blur-sm">
+        <TabsList className="grid w-full grid-cols-6 bg-muted/30 backdrop-blur-sm">
           <TabsTrigger value="text-inputs" className="transition-all duration-300">
             <User className="mr-2 h-4 w-4" />
             Text Inputs
@@ -161,9 +198,13 @@ const FormElements = () => {
             <Search className="mr-2 h-4 w-4" />
             Selection
           </TabsTrigger>
-          <TabsTrigger value="advanced" className="transition-all duration-300">
+          <TabsTrigger value="feedback" className="transition-all duration-300">
+            <Bell className="mr-2 h-4 w-4" />
+            Feedback
+          </TabsTrigger>
+          <TabsTrigger value="cards" className="transition-all duration-300">
             <Zap className="mr-2 h-4 w-4" />
-            Advanced
+            Cards & Layout
           </TabsTrigger>
         </TabsList>
 
@@ -474,9 +515,9 @@ const FormElements = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary" />
-                  Date & Time Inputs
+                  Native Date & Time Inputs
                 </CardTitle>
-                <CardDescription>Various date and time input types</CardDescription>
+                <CardDescription>HTML5 date and time input types</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -551,13 +592,50 @@ const FormElements = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Calendar</Label>
+                  <Label>Date Range Picker</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left font-normal"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.dateRange?.from ? (
+                          formData.dateRange.to ? (
+                            <>
+                              {format(formData.dateRange.from, "LLL dd, y")} -{" "}
+                              {format(formData.dateRange.to, "LLL dd, y")}
+                            </>
+                          ) : (
+                            format(formData.dateRange.from, "LLL dd, y")
+                          )
+                        ) : (
+                          <span>Pick a date range</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={formData.dateRange?.from}
+                        selected={formData.dateRange}
+                        onSelect={(range) => handleInputChange('dateRange', range)}
+                        numberOfMonths={2}
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Single Date Calendar</Label>
                   <div className="max-w-fit">
                     <Calendar
                       mode="single"
                       selected={formData.dateValue}
                       onSelect={(date) => handleInputChange('dateValue', date)}
-                      className="rounded-md border bg-background"
+                      className="rounded-md border bg-background p-3 pointer-events-auto"
                     />
                   </div>
                 </div>
@@ -623,60 +701,76 @@ const FormElements = () => {
 
             <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
               <CardHeader>
-                <CardTitle>Checkboxes & Radio</CardTitle>
-                <CardDescription>Selection controls</CardDescription>
+                <CardTitle>Form Controls</CardTitle>
+                <CardDescription>Checkboxes, radios, and switches</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Standard Checkbox</Label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="checkbox"
-                      checked={formData.checkboxValue}
-                      onCheckedChange={(checked) => handleInputChange('checkboxValue', checked)}
-                    />
-                    <Label htmlFor="checkbox">I agree to the terms</Label>
+              <CardContent className="space-y-6">
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">Checkboxes</Label>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="checkbox-1"
+                        checked={formData.checkboxValue}
+                        onCheckedChange={(checked) => handleInputChange('checkboxValue', checked)}
+                      />
+                      <Label htmlFor="checkbox-1">Primary checkbox</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="checkbox-2" defaultChecked />
+                      <Label htmlFor="checkbox-2">Checked by default</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="checkbox-3" disabled />
+                      <Label htmlFor="checkbox-3" className="text-muted-foreground">Disabled checkbox</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="checkbox-4" disabled defaultChecked />
+                      <Label htmlFor="checkbox-4" className="text-muted-foreground">Disabled & checked</Label>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Multiple Checkboxes</Label>
-                  <div className="space-y-2">
-                    {['Option A', 'Option B', 'Option C'].map((option, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <Checkbox id={`checkbox-${index}`} />
-                        <Label htmlFor={`checkbox-${index}`}>{option}</Label>
-                      </div>
-                    ))}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">Switch Toggles</Label>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        id="switch-1"
+                        checked={formData.switchValue}
+                        onCheckedChange={(checked) => handleInputChange('switchValue', checked)}
+                      />
+                      <Label htmlFor="switch-1">Enable notifications</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch id="switch-2" defaultChecked />
+                      <Label htmlFor="switch-2">Auto-save enabled</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch id="switch-3" disabled />
+                      <Label htmlFor="switch-3" className="text-muted-foreground">Disabled switch</Label>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Switch Toggle</Label>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="switch"
-                      checked={formData.switchValue}
-                      onCheckedChange={(checked) => handleInputChange('switchValue', checked)}
-                    />
-                    <Label htmlFor="switch">Enable notifications</Label>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Radio Buttons</Label>
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">Radio Buttons</Label>
                   <RadioGroup value={formData.radioValue} onValueChange={(value) => handleInputChange('radioValue', value)}>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option1" id="r1" />
-                      <Label htmlFor="r1">Option 1</Label>
+                      <RadioGroupItem value="small" id="r1" />
+                      <Label htmlFor="r1">Small</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option2" id="r2" />
-                      <Label htmlFor="r2">Option 2</Label>
+                      <RadioGroupItem value="medium" id="r2" />
+                      <Label htmlFor="r2">Medium</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option3" id="r3" />
-                      <Label htmlFor="r3">Option 3</Label>
+                      <RadioGroupItem value="large" id="r3" />
+                      <Label htmlFor="r3">Large</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="extra-large" id="r4" />
+                      <Label htmlFor="r4">Extra Large</Label>
                     </div>
                   </RadioGroup>
                 </div>
@@ -685,59 +779,109 @@ const FormElements = () => {
           </div>
         </TabsContent>
 
-        {/* Advanced Tab */}
-        <TabsContent value="advanced" className="space-y-6 animate-fade-in">
+        {/* Feedback Tab */}
+        <TabsContent value="feedback" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-primary" />
-                  Badges & Feedback
+                  <Bell className="h-5 w-5 text-primary" />
+                  Notifications & Alerts
                 </CardTitle>
-                <CardDescription>Status indicators and user feedback</CardDescription>
+                <CardDescription>Toast notifications and alert states</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Badges</Label>
+                  <Label>Toast Notifications</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
+                      onClick={() => showToast('success', 'Success!', 'Operation completed successfully')}
+                    >
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Success
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="bg-red-50 border-red-200 text-red-700 hover:bg-red-100"
+                      onClick={() => showToast('error', 'Error!', 'Something went wrong')}
+                    >
+                      <XCircle className="mr-2 h-4 w-4" />
+                      Error
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="bg-yellow-50 border-yellow-200 text-yellow-700 hover:bg-yellow-100"
+                      onClick={() => showToast('warning', 'Warning!', 'Please check your input')}
+                    >
+                      <AlertCircle className="mr-2 h-4 w-4" />
+                      Warning
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+                      onClick={() => showToast('info', 'Info!', 'Here is some information')}
+                    >
+                      <Info className="mr-2 h-4 w-4" />
+                      Info
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Badge Variants</Label>
                   <div className="flex flex-wrap gap-2">
                     <Badge variant="default">Default</Badge>
                     <Badge variant="secondary">Secondary</Badge>
-                    <Badge variant="destructive">Error</Badge>
+                    <Badge variant="destructive">Destructive</Badge>
                     <Badge variant="outline">Outline</Badge>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Toast Notifications</Label>
+                  <Label>Status Badges</Label>
                   <div className="flex flex-wrap gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => showToast('success', 'Success!', 'Operation completed successfully')}
-                    >
-                      Success Toast
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => showToast('error', 'Error!', 'Something went wrong')}
-                    >
-                      Error Toast
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => showToast('warning', 'Warning!', 'Please check your input')}
-                    >
-                      Warning Toast
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => showToast('info', 'Info!', 'Here is some information')}
-                    >
-                      Info Toast
-                    </Button>
+                    <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
+                      <CheckCircle className="mr-1 h-3 w-3" />
+                      Active
+                    </Badge>
+                    <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+                      <Clock className="mr-1 h-3 w-3" />
+                      Pending
+                    </Badge>
+                    <Badge className="bg-red-100 text-red-800 hover:bg-red-200">
+                      <XCircle className="mr-1 h-3 w-3" />
+                      Inactive
+                    </Badge>
+                    <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+                      <Info className="mr-1 h-3 w-3" />
+                      Info
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Progress Indicators</Label>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Upload Progress</span>
+                        <span>75%</span>
+                      </div>
+                      <Progress value={75} className="w-full" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Download Progress</span>
+                        <span>45%</span>
+                      </div>
+                      <Progress value={45} className="w-full bg-blue-100" />
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -782,6 +926,9 @@ const FormElements = () => {
                     <Button size="icon" variant="outline">
                       <Upload className="h-4 w-4" />
                     </Button>
+                    <Button size="icon" variant="outline">
+                      <Bell className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
 
@@ -797,6 +944,115 @@ const FormElements = () => {
                     </Button>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Cards & Layout Tab */}
+        <TabsContent value="cards" className="space-y-6 animate-fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Basic Card */}
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <CardTitle>Basic Card</CardTitle>
+                <CardDescription>Simple card with header and content</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>This is a basic card component with a header and content area.</p>
+              </CardContent>
+            </Card>
+
+            {/* Card with Actions */}
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Card with Actions</span>
+                  <Button size="sm" variant="outline">
+                    <Star className="h-4 w-4" />
+                  </Button>
+                </CardTitle>
+                <CardDescription>Card with action buttons in header</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>This card includes action buttons for user interaction.</p>
+                <div className="flex gap-2 mt-4">
+                  <Button size="sm">Primary</Button>
+                  <Button size="sm" variant="outline">Secondary</Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Statistics Card */}
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                <DollarSign className="h-4 w-4 text-blue-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-blue-900">$45,231.89</div>
+                <p className="text-xs text-blue-600">+20.1% from last month</p>
+              </CardContent>
+            </Card>
+
+            {/* User Profile Card */}
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold">
+                    JD
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">John Doe</CardTitle>
+                    <CardDescription>Software Engineer</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">john.doe@example.com</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">San Francisco, CA</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Feature Card */}
+            <Card className="bg-gradient-to-br from-green-50 to-emerald-100 border-green-200 hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-2">
+                  <Zap className="h-6 w-6 text-white" />
+                </div>
+                <CardTitle>Fast Performance</CardTitle>
+                <CardDescription>Lightning-fast load times</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-green-700">
+                  Optimized for speed with advanced caching and CDN delivery.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Notification Card */}
+            <Card className="border-yellow-200 bg-yellow-50 hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-yellow-800">
+                  <AlertCircle className="h-5 w-5" />
+                  System Update
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-yellow-700">
+                  A new system update is available. Please restart your application to apply the changes.
+                </p>
+                <Button size="sm" className="mt-3 bg-yellow-600 hover:bg-yellow-700">
+                  Update Now
+                </Button>
               </CardContent>
             </Card>
           </div>
