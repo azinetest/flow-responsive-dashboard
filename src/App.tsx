@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,7 @@ import Forms from "@/pages/Forms";
 import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
+import FormElements from "@/pages/FormElements";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +38,7 @@ const App = () => (
               <Route index element={<Dashboard />} />
               <Route path="users" element={<Users />} />
               <Route path="forms" element={<Forms />} />
+              <Route path="form-elements" element={<FormElements />} />
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<Settings />} />
             </Route>

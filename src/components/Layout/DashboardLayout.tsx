@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState } from 'react';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
@@ -7,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Menu, Home, Users, FileText, Settings, User, LogOut, Moon, Sun, Palette } from 'lucide-react';
+import { Menu, Home, Users, FileText, Settings, User, LogOut, Moon, Sun, Palette, LayoutDashboard, Zap } from 'lucide-react';
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -15,12 +14,43 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const navigationItems = [
-    { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'Users', href: '/dashboard/users', icon: Users },
-    { name: 'Forms', href: '/dashboard/forms', icon: FileText },
-    { name: 'Profile', href: '/dashboard/profile', icon: User },
-    { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+  const menuItems = [
+    {
+      title: "Dashboard",
+      icon: LayoutDashboard,
+      href: "/dashboard",
+      isActive: location.pathname === "/dashboard",
+    },
+    {
+      title: "Users",
+      icon: Users,
+      href: "/dashboard/users",
+      isActive: location.pathname === "/dashboard/users",
+    },
+    {
+      title: "Forms",
+      icon: FileText,
+      href: "/dashboard/forms",
+      isActive: location.pathname === "/dashboard/forms",
+    },
+    {
+      title: "Form Elements",
+      icon: Zap,
+      href: "/dashboard/form-elements",
+      isActive: location.pathname === "/dashboard/form-elements",
+    },
+    {
+      title: "Profile",
+      icon: User,
+      href: "/dashboard/profile",
+      isActive: location.pathname === "/dashboard/profile",
+    },
+    {
+      title: "Settings",
+      icon: Settings,
+      href: "/dashboard/settings",
+      isActive: location.pathname === "/dashboard/settings",
+    },
   ];
 
   const handleLogout = () => {
@@ -57,11 +87,11 @@ const DashboardLayout = () => {
       </div>
       
       <nav className="flex-1 p-4 space-y-2">
-        {navigationItems.map((item, index) => {
-          const isActive = location.pathname === item.href;
+        {menuItems.map((item, index) => {
+          const isActive = item.isActive;
           return (
             <Link
-              key={item.name}
+              key={item.title}
               to={item.href}
               onClick={() => mobile && setSidebarOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 transform hover:scale-[1.02] group ${
@@ -74,7 +104,7 @@ const DashboardLayout = () => {
               }}
             >
               <item.icon className={`h-5 w-5 transition-all duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-105'}`} />
-              <span className="font-medium">{item.name}</span>
+              <span className="font-medium">{item.title}</span>
               {isActive && (
                 <div className="ml-auto w-2 h-2 bg-primary-foreground rounded-full animate-pulse" />
               )}
@@ -116,7 +146,7 @@ const DashboardLayout = () => {
                 </SheetContent>
               </Sheet>
               <h1 className="text-xl font-semibold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                {navigationItems.find(item => item.href === location.pathname)?.name || 'Dashboard'}
+                {menuItems.find(item => item.href === location.pathname)?.title || 'Dashboard'}
               </h1>
             </div>
 
