@@ -2,50 +2,34 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Search, MoreVertical, UserPlus, Filter } from 'lucide-react';
+import { DataTable } from '@/components/ui/data-table';
+import { ColumnDef } from '@tanstack/react-table';
+import { MoreVertical, UserPlus, Filter, ArrowUpDown } from 'lucide-react';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  avatar: string;
+  joinDate: string;
+}
 
 const Users = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortField, setSortField] = useState('name');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-
-  const users = [
+  const users: User[] = [
     { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', avatar: '/placeholder.svg', joinDate: '2024-01-15' },
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'Active', avatar: '/placeholder.svg', joinDate: '2024-02-20' },
     { id: 3, name: 'Mike Johnson', email: 'mike@example.com', role: 'Moderator', status: 'Inactive', avatar: '/placeholder.svg', joinDate: '2024-03-10' },
     { id: 4, name: 'Sarah Wilson', email: 'sarah@example.com', role: 'User', status: 'Active', avatar: '/placeholder.svg', joinDate: '2024-04-05' },
     { id: 5, name: 'David Brown', email: 'david@example.com', role: 'User', status: 'Pending', avatar: '/placeholder.svg', joinDate: '2024-05-12' },
+    { id: 6, name: 'Emily Davis', email: 'emily@example.com', role: 'Admin', status: 'Active', avatar: '/placeholder.svg', joinDate: '2024-01-22' },
+    { id: 7, name: 'Chris Wilson', email: 'chris@example.com', role: 'User', status: 'Inactive', avatar: '/placeholder.svg', joinDate: '2024-03-15' },
+    { id: 8, name: 'Lisa Garcia', email: 'lisa@example.com', role: 'Moderator', status: 'Active', avatar: '/placeholder.svg', joinDate: '2024-02-28' },
   ];
-
-  const handleSort = (field: string) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const sortedUsers = [...filteredUsers].sort((a, b) => {
-    const aValue = a[sortField as keyof typeof a];
-    const bValue = b[sortField as keyof typeof b];
-    
-    if (sortDirection === 'asc') {
-      return aValue > bValue ? 1 : -1;
-    } else {
-      return aValue < bValue ? 1 : -1;
-    }
-  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -65,116 +49,170 @@ const Users = () => {
     }
   };
 
+  const columns: ColumnDef<User>[] = [
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="hover:bg-primary/10 transition-colors"
+          >
+            User
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <div className="flex items-center space-x-3">
+            <Avatar className="h-8 w-8 ring-2 ring-primary/20">
+              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
+                {user.name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="font-medium">{user.name}</div>
+              <div className="text-sm text-muted-foreground">{user.email}</div>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "role",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="hover:bg-primary/10 transition-colors"
+          >
+            Role
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const role = row.getValue("role") as string;
+        return (
+          <Badge variant={getRoleColor(role) as any} className="hover:scale-105 transition-transform">
+            {role}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="hover:bg-primary/10 transition-colors"
+          >
+            Status
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        return (
+          <Badge variant={getStatusColor(status) as any} className="hover:scale-105 transition-transform">
+            {status}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "joinDate",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="hover:bg-primary/10 transition-colors"
+          >
+            Join Date
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("joinDate"));
+        return <div className="font-medium">{date.toLocaleDateString()}</div>;
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0 hover:scale-105 transition-all duration-200">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-card/95 backdrop-blur-xl border-border/50">
+              <DropdownMenuItem className="hover:bg-primary/10 transition-colors">
+                View profile
+              </DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-primary/10 transition-colors">
+                Edit user
+              </DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-primary/10 transition-colors">
+                Reset password
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-red-600 hover:bg-destructive/10 transition-colors">
+                Delete user
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Users</h2>
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Users Management
+          </h2>
           <p className="text-muted-foreground">
-            Manage your team members and their permissions.
+            Manage your team members and their permissions with enhanced data tables.
           </p>
         </div>
-        <Button>
+        <Button className="bg-gradient-to-r from-primary to-primary/80 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
           <UserPlus className="mr-2 h-4 w-4" />
           Add User
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>User Management</CardTitle>
+      <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
+        <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-border/50">
+          <CardTitle className="flex items-center gap-2">
+            <Filter className="h-5 w-5 text-primary" />
+            Enhanced User Table
+          </CardTitle>
           <CardDescription>
-            A list of all users in your organization including their role and status.
+            Advanced data table with sorting, filtering, pagination and column visibility controls.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between mb-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Button variant="outline" size="sm">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button>
-          </div>
-
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead onClick={() => handleSort('name')} className="cursor-pointer hover:bg-muted/50">
-                    User {sortField === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
-                  </TableHead>
-                  <TableHead onClick={() => handleSort('role')} className="cursor-pointer hover:bg-muted/50">
-                    Role {sortField === 'role' && (sortDirection === 'asc' ? '↑' : '↓')}
-                  </TableHead>
-                  <TableHead onClick={() => handleSort('status')} className="cursor-pointer hover:bg-muted/50">
-                    Status {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
-                  </TableHead>
-                  <TableHead onClick={() => handleSort('joinDate')} className="cursor-pointer hover:bg-muted/50">
-                    Join Date {sortField === 'joinDate' && (sortDirection === 'asc' ? '↑' : '↓')}
-                  </TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedUsers.map((user) => (
-                  <TableRow key={user.id} className="hover:bg-muted/50">
-                    <TableCell>
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.avatar} alt={user.name} />
-                          <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium">{user.name}</div>
-                          <div className="text-sm text-muted-foreground">{user.email}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getRoleColor(user.role) as any}>
-                        {user.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusColor(user.status) as any}>
-                        {user.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{new Date(user.joinDate).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View profile</DropdownMenuItem>
-                          <DropdownMenuItem>Edit user</DropdownMenuItem>
-                          <DropdownMenuItem>Reset password</DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">Delete user</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {sortedUsers.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No users found matching your search.</p>
-            </div>
-          )}
+        <CardContent className="p-6">
+          <DataTable 
+            columns={columns} 
+            data={users} 
+            searchKey="name"
+            searchPlaceholder="Search users by name..."
+          />
         </CardContent>
       </Card>
     </div>

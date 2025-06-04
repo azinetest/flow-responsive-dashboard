@@ -5,345 +5,343 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Badge } from '@/components/ui/badge';
-import { CalendarIcon, Save, RefreshCw } from 'lucide-react';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { SearchableSelect } from '@/components/ui/searchable-select';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { useToast } from '@/hooks/use-toast';
+import { Save, Plus, Trash2, Star, Heart, Zap } from 'lucide-react';
 
 const Forms = () => {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
-    phone: '',
-    company: '',
-    position: '',
-    department: '',
-    description: '',
-    experience: 'beginner',
+    country: '',
     skills: [] as string[],
     newsletter: false,
     notifications: true,
-    priority: [3],
-    startDate: undefined as Date | undefined,
+    bio: '',
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const countries = [
+    { label: 'United States', value: 'us' },
+    { label: 'United Kingdom', value: 'uk' },
+    { label: 'Canada', value: 'ca' },
+    { label: 'Australia', value: 'au' },
+    { label: 'Germany', value: 'de' },
+    { label: 'France', value: 'fr' },
+    { label: 'Spain', value: 'es' },
+    { label: 'Italy', value: 'it' },
+    { label: 'Japan', value: 'jp' },
+    { label: 'South Korea', value: 'kr' },
+  ];
 
-  const skillOptions = ['JavaScript', 'React', 'TypeScript', 'Node.js', 'Python', 'UI/UX Design'];
+  const skillOptions = [
+    { label: 'JavaScript', value: 'javascript' },
+    { label: 'TypeScript', value: 'typescript' },
+    { label: 'React', value: 'react' },
+    { label: 'Vue.js', value: 'vue' },
+    { label: 'Angular', value: 'angular' },
+    { label: 'Node.js', value: 'nodejs' },
+    { label: 'Python', value: 'python' },
+    { label: 'Java', value: 'java' },
+    { label: 'C++', value: 'cpp' },
+    { label: 'Go', value: 'go' },
+  ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      toast({
-        title: "Form submitted successfully!",
-        description: "Your information has been saved.",
-      });
-      setIsLoading(false);
-    }, 1000);
+    toast({
+      title: "Form submitted!",
+      description: "Your information has been saved successfully.",
+    });
   };
 
-  const handleSkillToggle = (skill: string) => {
+  const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
       ...prev,
-      skills: prev.skills.includes(skill)
-        ? prev.skills.filter(s => s !== skill)
-        : [...prev.skills, skill]
+      [field]: value,
     }));
   };
 
-  const handleReset = () => {
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      company: '',
-      position: '',
-      department: '',
-      description: '',
-      experience: 'beginner',
-      skills: [],
-      newsletter: false,
-      notifications: true,
-      priority: [3],
-      startDate: undefined,
-    });
-    toast({
-      title: "Form reset",
-      description: "All fields have been cleared.",
-    });
-  };
-
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Forms</h2>
-        <p className="text-muted-foreground">
-          Comprehensive form example with various input types and validation.
-        </p>
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Interactive Forms
+          </h2>
+          <p className="text-muted-foreground">
+            Showcase of enhanced form components with animations and modern UI elements.
+          </p>
+        </div>
+        <Button className="bg-gradient-to-r from-primary to-primary/80 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+          <Plus className="mr-2 h-4 w-4" />
+          New Form
+        </Button>
       </div>
 
-      <Card className="max-w-4xl">
-        <CardHeader>
-          <CardTitle>User Information Form</CardTitle>
-          <CardDescription>
-            Please fill out all required fields. This form demonstrates various input types and validation.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Personal Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Personal Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name *</Label>
-                  <Input
-                    id="firstName"
-                    value={formData.firstName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                    required
-                    className="transition-all duration-200 focus:scale-[1.02]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name *</Label>
-                  <Input
-                    id="lastName"
-                    value={formData.lastName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                    required
-                    className="transition-all duration-200 focus:scale-[1.02]"
-                  />
-                </div>
-              </div>
+      <Tabs defaultValue="basic" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 bg-muted/30 backdrop-blur-sm">
+          <TabsTrigger value="basic" className="transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground">
+            <Star className="mr-2 h-4 w-4" />
+            Basic Form
+          </TabsTrigger>
+          <TabsTrigger value="advanced" className="transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground">
+            <Zap className="mr-2 h-4 w-4" />
+            Advanced
+          </TabsTrigger>
+          <TabsTrigger value="preferences" className="transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground">
+            <Heart className="mr-2 h-4 w-4" />
+            Preferences
+          </TabsTrigger>
+        </TabsList>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    required
-                    className="transition-all duration-200 focus:scale-[1.02]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                    className="transition-all duration-200 focus:scale-[1.02]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Professional Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Professional Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="company">Company</Label>
-                  <Input
-                    id="company"
-                    value={formData.company}
-                    onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-                    className="transition-all duration-200 focus:scale-[1.02]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="position">Position</Label>
-                  <Input
-                    id="position"
-                    value={formData.position}
-                    onChange={(e) => setFormData(prev => ({ ...prev, position: e.target.value }))}
-                    className="transition-all duration-200 focus:scale-[1.02]"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Select value={formData.department} onValueChange={(value) => setFormData(prev => ({ ...prev, department: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="engineering">Engineering</SelectItem>
-                    <SelectItem value="design">Design</SelectItem>
-                    <SelectItem value="marketing">Marketing</SelectItem>
-                    <SelectItem value="sales">Sales</SelectItem>
-                    <SelectItem value="hr">Human Resources</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Tell us about yourself..."
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  rows={4}
-                  className="transition-all duration-200 focus:scale-[1.02]"
-                />
-              </div>
-            </div>
-
-            {/* Experience Level */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Experience Level</h3>
-              <RadioGroup
-                value={formData.experience}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, experience: value }))}
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="beginner" id="beginner" />
-                  <Label htmlFor="beginner">Beginner (0-2 years)</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="intermediate" id="intermediate" />
-                  <Label htmlFor="intermediate">Intermediate (3-5 years)</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="advanced" id="advanced" />
-                  <Label htmlFor="advanced">Advanced (5+ years)</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            {/* Skills */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Skills</h3>
-              <div className="space-y-2">
-                <Label>Select your skills:</Label>
-                <div className="flex flex-wrap gap-2">
-                  {skillOptions.map((skill) => (
-                    <Badge
-                      key={skill}
-                      variant={formData.skills.includes(skill) ? "default" : "outline"}
-                      className="cursor-pointer transition-all duration-200 hover:scale-105"
-                      onClick={() => handleSkillToggle(skill)}
-                    >
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Priority Slider */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Priority Level</h3>
-              <div className="space-y-2">
-                <Label>Priority: {formData.priority[0]}/5</Label>
-                <Slider
-                  value={formData.priority}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
-                  max={5}
-                  min={1}
-                  step={1}
-                  className="w-full"
-                />
-              </div>
-            </div>
-
-            {/* Date Picker */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Start Date</h3>
-              <div className="space-y-2">
-                <Label>Preferred start date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !formData.startDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.startDate ? format(formData.startDate, "PPP") : "Pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={formData.startDate}
-                      onSelect={(date) => setFormData(prev => ({ ...prev, startDate: date }))}
-                      initialFocus
-                      className="pointer-events-auto"
+        <TabsContent value="basic" className="space-y-6 animate-fade-in">
+          <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
+            <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-border/50">
+              <CardTitle className="flex items-center gap-2">
+                <Star className="h-5 w-5 text-primary" />
+                Basic Information
+              </CardTitle>
+              <CardDescription>
+                Enter your personal details with enhanced form controls.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+                    <Input
+                      id="name"
+                      placeholder="Enter your full name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      className="transition-all duration-200 focus:scale-[1.02] hover:shadow-md"
                     />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-
-            {/* Preferences */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Preferences</h3>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="newsletter"
-                    checked={formData.newsletter}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, newsletter: checked as boolean }))}
-                  />
-                  <Label htmlFor="newsletter">Subscribe to newsletter</Label>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="your@email.com"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      className="transition-all duration-200 focus:scale-[1.02] hover:shadow-md"
+                    />
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="notifications">Enable notifications</Label>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Country</Label>
+                  <SearchableSelect
+                    options={countries}
+                    value={formData.country}
+                    onChange={(value) => handleInputChange('country', value)}
+                    placeholder="Select your country"
+                    searchPlaceholder="Search countries..."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Bio</Label>
+                  <Textarea
+                    placeholder="Tell us about yourself..."
+                    value={formData.bio}
+                    onChange={(e) => handleInputChange('bio', e.target.value)}
+                    className="min-h-[100px] transition-all duration-200 focus:scale-[1.01] hover:shadow-md resize-none"
+                  />
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-primary to-primary/80 hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Basic Information
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="advanced" className="space-y-6 animate-fade-in">
+          <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
+            <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-border/50">
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-5 w-5 text-primary" />
+                Advanced Components
+              </CardTitle>
+              <CardDescription>
+                Explore multi-select dropdowns and advanced form controls.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <form className="space-y-6">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Technical Skills</Label>
+                  <MultiSelect
+                    options={skillOptions}
+                    selected={formData.skills}
+                    onChange={(skills) => handleInputChange('skills', skills)}
+                    placeholder="Select your skills..."
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Select multiple skills that match your expertise
+                  </p>
+                </div>
+
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="item-1" className="border-border/50">
+                    <AccordionTrigger className="hover:text-primary transition-colors">
+                      Additional Settings
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="experience" className="text-sm font-medium">Years of Experience</Label>
+                          <Input
+                            id="experience"
+                            type="number"
+                            placeholder="5"
+                            className="transition-all duration-200 focus:scale-[1.02] hover:shadow-md"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="salary" className="text-sm font-medium">Expected Salary</Label>
+                          <Input
+                            id="salary"
+                            placeholder="$80,000"
+                            className="transition-all duration-200 focus:scale-[1.02] hover:shadow-md"
+                          />
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="item-2" className="border-border/50">
+                    <AccordionTrigger className="hover:text-primary transition-colors">
+                      Portfolio & Links
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="portfolio" className="text-sm font-medium">Portfolio URL</Label>
+                        <Input
+                          id="portfolio"
+                          placeholder="https://yourportfolio.com"
+                          className="transition-all duration-200 focus:scale-[1.02] hover:shadow-md"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="linkedin" className="text-sm font-medium">LinkedIn Profile</Label>
+                        <Input
+                          id="linkedin"
+                          placeholder="https://linkedin.com/in/yourname"
+                          className="transition-all duration-200 focus:scale-[1.02] hover:shadow-md"
+                        />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-primary to-primary/80 hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Advanced Settings
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="preferences" className="space-y-6 animate-fade-in">
+          <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
+            <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-border/50">
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="h-5 w-5 text-primary" />
+                User Preferences
+              </CardTitle>
+              <CardDescription>
+                Configure your account preferences with toggle switches.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-muted/30 to-muted/10 border border-border/50">
+                  <div className="space-y-0.5">
+                    <Label className="text-base font-medium">Email Newsletter</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Receive weekly updates and product news
+                    </p>
+                  </div>
                   <Switch
-                    id="notifications"
-                    checked={formData.notifications}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, notifications: checked }))}
+                    checked={formData.newsletter}
+                    onCheckedChange={(checked) => handleInputChange('newsletter', checked)}
+                    className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-primary data-[state=checked]:to-primary/80"
                   />
                 </div>
-              </div>
-            </div>
 
-            {/* Form Actions */}
-            <div className="flex gap-4 pt-6 border-t">
-              <Button type="submit" disabled={isLoading} className="flex-1">
-                {isLoading ? (
-                  <>
-                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    Submit Form
-                  </>
-                )}
-              </Button>
-              <Button type="button" variant="outline" onClick={handleReset}>
-                Reset
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-muted/30 to-muted/10 border border-border/50">
+                  <div className="space-y-0.5">
+                    <Label className="text-base font-medium">Push Notifications</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Get notified about important updates
+                    </p>
+                  </div>
+                  <Switch
+                    checked={formData.notifications}
+                    onCheckedChange={(checked) => handleInputChange('notifications', checked)}
+                    className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-primary data-[state=checked]:to-primary/80"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-muted/30 to-muted/10 border border-border/50">
+                  <div className="space-y-0.5">
+                    <Label className="text-base font-medium">Profile Visibility</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Make your profile visible to recruiters
+                    </p>
+                  </div>
+                  <Switch className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-primary data-[state=checked]:to-primary/80" />
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-muted/30 to-muted/10 border border-border/50">
+                  <div className="space-y-0.5">
+                    <Label className="text-base font-medium">Marketing Communications</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Receive tips, offers, and product announcements
+                    </p>
+                  </div>
+                  <Switch className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-primary data-[state=checked]:to-primary/80" />
+                </div>
+
+                <div className="pt-4 border-t border-border/50">
+                  <div className="flex gap-3">
+                    <Button 
+                      className="flex-1 bg-gradient-to-r from-primary to-primary/80 hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl"
+                    >
+                      <Save className="mr-2 h-4 w-4" />
+                      Save Preferences
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="hover:scale-105 transition-all duration-200 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Reset
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
