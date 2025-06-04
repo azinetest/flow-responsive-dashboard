@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type Theme = 'light' | 'dark';
 type PrimaryColor = 'blue' | 'purple' | 'green' | 'orange' | 'red';
@@ -21,7 +21,11 @@ export const useTheme = () => {
   return context;
 };
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface ThemeProviderProps {
+  children: ReactNode;
+}
+
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('light');
   const [primaryColor, setPrimaryColorState] = useState<PrimaryColor>('blue');
 
@@ -63,8 +67,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setPrimaryColorState(color);
   };
 
+  const value: ThemeContextType = {
+    theme,
+    toggleTheme,
+    primaryColor,
+    setPrimaryColor
+  };
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, primaryColor, setPrimaryColor }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
