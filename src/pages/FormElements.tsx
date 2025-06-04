@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,31 +30,63 @@ import {
   User, 
   Mail, 
   Lock,
+  Phone,
+  Globe,
+  CreditCard,
+  DollarSign,
+  Percent,
+  Hash,
   Upload as UploadIcon,
   Star,
   Heart,
-  Zap
+  Zap,
+  Clock,
+  MapPin
 } from 'lucide-react';
 import { format } from 'date-fns';
 
 const FormElements = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
+    // Text inputs
     textInput: '',
-    numberInput: 0,
-    emailInput: '',
     passwordInput: '',
+    emailInput: '',
+    phoneInput: '',
+    urlInput: '',
+    searchInput: '',
+    
+    // Number inputs
+    numberInput: 0,
+    rangeInput: 50,
+    currencyInput: 0,
+    percentageInput: 0,
+    
+    // Date/Time inputs
+    dateInput: '',
+    timeInput: '',
+    datetimeInput: '',
+    monthInput: '',
+    weekInput: '',
+    
+    // Other inputs
+    colorInput: '#3b82f6',
+    fileInput: null as File | null,
     textareaInput: '',
+    
+    // Form controls
     switchValue: false,
     checkboxValue: false,
     radioValue: '',
     selectValue: '',
-    searchableSelectValue: '',
     multiSelectValue: [] as string[],
-    sliderValue: [50],
     tagsValue: [] as string[],
+    sliderValue: [50],
+    
+    // Advanced inputs
+    searchableSelectValue: '',
+    autocompleteValue: '',
     dateValue: undefined as Date | undefined,
-    fileValue: null as File | null,
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -68,6 +99,8 @@ const FormElements = () => {
     { label: 'Australia', value: 'au' },
     { label: 'Germany', value: 'de' },
     { label: 'France', value: 'fr' },
+    { label: 'Japan', value: 'jp' },
+    { label: 'Brazil', value: 'br' },
   ];
 
   const skillOptions = [
@@ -77,10 +110,12 @@ const FormElements = () => {
     { label: 'Vue.js', value: 'vue' },
     { label: 'Angular', value: 'angular' },
     { label: 'Node.js', value: 'nodejs' },
+    { label: 'Python', value: 'python' },
+    { label: 'PHP', value: 'php' },
   ];
 
   const autocompleteOptions = [
-    'Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape'
+    'Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape', 'Honeydew'
   ];
 
   const handleInputChange = (field: string, value: any) => {
@@ -103,62 +138,55 @@ const FormElements = () => {
             Form Elements Reference
           </h2>
           <p className="text-muted-foreground">
-            Complete showcase of all available form components and UI elements
+            Complete showcase of all available form input types and UI components
           </p>
         </div>
       </div>
 
-      <Tabs defaultValue="inputs" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-muted/30 backdrop-blur-sm">
-          <TabsTrigger value="inputs" className="transition-all duration-300">
+      <Tabs defaultValue="text-inputs" className="w-full">
+        <TabsList className="grid w-full grid-cols-5 bg-muted/30 backdrop-blur-sm">
+          <TabsTrigger value="text-inputs" className="transition-all duration-300">
             <User className="mr-2 h-4 w-4" />
-            Input Fields
+            Text Inputs
+          </TabsTrigger>
+          <TabsTrigger value="number-inputs" className="transition-all duration-300">
+            <Hash className="mr-2 h-4 w-4" />
+            Number Inputs
+          </TabsTrigger>
+          <TabsTrigger value="date-time" className="transition-all duration-300">
+            <Clock className="mr-2 h-4 w-4" />
+            Date & Time
           </TabsTrigger>
           <TabsTrigger value="selection" className="transition-all duration-300">
             <Search className="mr-2 h-4 w-4" />
             Selection
           </TabsTrigger>
-          <TabsTrigger value="feedback" className="transition-all duration-300">
-            <Star className="mr-2 h-4 w-4" />
-            Feedback
-          </TabsTrigger>
-          <TabsTrigger value="interactive" className="transition-all duration-300">
+          <TabsTrigger value="advanced" className="transition-all duration-300">
             <Zap className="mr-2 h-4 w-4" />
-            Interactive
+            Advanced
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="inputs" className="space-y-6 animate-fade-in">
+        {/* Text Inputs Tab */}
+        <TabsContent value="text-inputs" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Text Inputs */}
             <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5 text-primary" />
-                  Text Inputs
+                  Basic Text Inputs
                 </CardTitle>
-                <CardDescription>Various text input types and states</CardDescription>
+                <CardDescription>Standard text input variations</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="text-input">Text Input</Label>
                   <Input
                     id="text-input"
+                    type="text"
                     placeholder="Enter text..."
                     value={formData.textInput}
                     onChange={(e) => handleInputChange('textInput', e.target.value)}
-                    className="transition-all duration-200 focus:scale-[1.02]"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="number-input">Number Input</Label>
-                  <Input
-                    id="number-input"
-                    type="number"
-                    placeholder="Enter number..."
-                    value={formData.numberInput}
-                    onChange={(e) => handleInputChange('numberInput', parseInt(e.target.value) || 0)}
                     className="transition-all duration-200 focus:scale-[1.02]"
                   />
                 </div>
@@ -203,6 +231,70 @@ const FormElements = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="phone-input">Phone Input</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="phone-input"
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      value={formData.phoneInput}
+                      onChange={(e) => handleInputChange('phoneInput', e.target.value)}
+                      className="pl-10 transition-all duration-200 focus:scale-[1.02]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="url-input">URL Input</Label>
+                  <div className="relative">
+                    <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="url-input"
+                      type="url"
+                      placeholder="https://example.com"
+                      value={formData.urlInput}
+                      onChange={(e) => handleInputChange('urlInput', e.target.value)}
+                      className="pl-10 transition-all duration-200 focus:scale-[1.02]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="search-input">Search Input</Label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="search-input"
+                      type="search"
+                      placeholder="Search..."
+                      value={formData.searchInput}
+                      onChange={(e) => handleInputChange('searchInput', e.target.value)}
+                      className="pl-10 transition-all duration-200 focus:scale-[1.02]"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
+              <CardHeader>
+                <CardTitle>Text Areas & Special States</CardTitle>
+                <CardDescription>Multi-line text and input states</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="textarea">Textarea</Label>
+                  <Textarea
+                    id="textarea"
+                    placeholder="Enter multiple lines of text..."
+                    value={formData.textareaInput}
+                    onChange={(e) => handleInputChange('textareaInput', e.target.value)}
+                    className="min-h-[100px] transition-all duration-200 focus:scale-[1.01] resize-none"
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="error-input">Input with Error</Label>
                   <Input
                     id="error-input"
@@ -221,44 +313,144 @@ const FormElements = () => {
                     className="opacity-60"
                   />
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Textarea and File Upload */}
-            <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <UploadIcon className="h-5 w-5 text-primary" />
-                  Text Areas & Upload
-                </CardTitle>
-                <CardDescription>Multi-line text and file inputs</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="textarea">Textarea</Label>
-                  <Textarea
-                    id="textarea"
-                    placeholder="Enter multiple lines of text..."
-                    value={formData.textareaInput}
-                    onChange={(e) => handleInputChange('textareaInput', e.target.value)}
-                    className="min-h-[100px] transition-all duration-200 focus:scale-[1.01] resize-none"
+                  <Label htmlFor="readonly-input">Read-only Input</Label>
+                  <Input
+                    id="readonly-input"
+                    value="This is read-only"
+                    readOnly
+                    className="bg-muted"
                   />
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="color-input">Color Input</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="color-input"
+                      type="color"
+                      value={formData.colorInput}
+                      onChange={(e) => handleInputChange('colorInput', e.target.value)}
+                      className="w-20 h-10 p-1 rounded-md"
+                    />
+                    <span className="text-sm text-muted-foreground">{formData.colorInput}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Number Inputs Tab */}
+        <TabsContent value="number-inputs" className="space-y-6 animate-fade-in">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Hash className="h-5 w-5 text-primary" />
+                  Number Inputs
+                </CardTitle>
+                <CardDescription>Numeric input variations</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="number-input">Number Input</Label>
+                  <Input
+                    id="number-input"
+                    type="number"
+                    placeholder="Enter number..."
+                    value={formData.numberInput}
+                    onChange={(e) => handleInputChange('numberInput', parseInt(e.target.value) || 0)}
+                    className="transition-all duration-200 focus:scale-[1.02]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="currency-input">Currency Input</Label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="currency-input"
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      value={formData.currencyInput}
+                      onChange={(e) => handleInputChange('currencyInput', parseFloat(e.target.value) || 0)}
+                      className="pl-10 transition-all duration-200 focus:scale-[1.02]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="percentage-input">Percentage Input</Label>
+                  <div className="relative">
+                    <Percent className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="percentage-input"
+                      type="number"
+                      min="0"
+                      max="100"
+                      placeholder="0"
+                      value={formData.percentageInput}
+                      onChange={(e) => handleInputChange('percentageInput', parseFloat(e.target.value) || 0)}
+                      className="pr-10 transition-all duration-200 focus:scale-[1.02]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Range Slider</Label>
+                  <Slider
+                    value={formData.sliderValue}
+                    onValueChange={(value) => handleInputChange('sliderValue', value)}
+                    max={100}
+                    step={1}
+                    className="w-full"
+                  />
+                  <p className="text-sm text-muted-foreground">Value: {formData.sliderValue[0]}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Progress Bar</Label>
+                  <Progress value={progress} className="w-full" />
+                  <p className="text-sm text-muted-foreground">{progress}% complete</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
+              <CardHeader>
+                <CardTitle>File & Upload Inputs</CardTitle>
+                <CardDescription>File handling components</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
                   <Label>File Upload</Label>
                   <FileUpload
-                    onFileSelect={(file) => handleInputChange('fileValue', file)}
+                    onFileSelect={(file) => handleInputChange('fileInput', file)}
                     accept="image/*"
                     maxSize={5 * 1024 * 1024} // 5MB
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Date Time Picker</Label>
-                  <DateTimePicker
-                    value={formData.dateValue}
-                    onChange={(date) => handleInputChange('dateValue', date)}
+                  <Label htmlFor="file-input">Native File Input</Label>
+                  <Input
+                    id="file-input"
+                    type="file"
+                    onChange={(e) => handleInputChange('fileInput', e.target.files?.[0] || null)}
+                    className="transition-all duration-200 focus:scale-[1.02]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="multiple-files">Multiple Files</Label>
+                  <Input
+                    id="multiple-files"
+                    type="file"
+                    multiple
+                    className="transition-all duration-200 focus:scale-[1.02]"
                   />
                 </div>
 
@@ -270,20 +462,111 @@ const FormElements = () => {
                     placeholder="Add tags..."
                   />
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Date & Time Tab */}
+        <TabsContent value="date-time" className="space-y-6 animate-fade-in">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-primary" />
+                  Date & Time Inputs
+                </CardTitle>
+                <CardDescription>Various date and time input types</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="date-input">Date Input</Label>
+                  <Input
+                    id="date-input"
+                    type="date"
+                    value={formData.dateInput}
+                    onChange={(e) => handleInputChange('dateInput', e.target.value)}
+                    className="transition-all duration-200 focus:scale-[1.02]"
+                  />
+                </div>
 
                 <div className="space-y-2">
-                  <Label>Autocomplete Input</Label>
-                  <AutocompleteInput
-                    options={autocompleteOptions}
-                    placeholder="Type to search..."
-                    onSelect={(value) => console.log('Selected:', value)}
+                  <Label htmlFor="time-input">Time Input</Label>
+                  <Input
+                    id="time-input"
+                    type="time"
+                    value={formData.timeInput}
+                    onChange={(e) => handleInputChange('timeInput', e.target.value)}
+                    className="transition-all duration-200 focus:scale-[1.02]"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="datetime-input">DateTime Input</Label>
+                  <Input
+                    id="datetime-input"
+                    type="datetime-local"
+                    value={formData.datetimeInput}
+                    onChange={(e) => handleInputChange('datetimeInput', e.target.value)}
+                    className="transition-all duration-200 focus:scale-[1.02]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="month-input">Month Input</Label>
+                  <Input
+                    id="month-input"
+                    type="month"
+                    value={formData.monthInput}
+                    onChange={(e) => handleInputChange('monthInput', e.target.value)}
+                    className="transition-all duration-200 focus:scale-[1.02]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="week-input">Week Input</Label>
+                  <Input
+                    id="week-input"
+                    type="week"
+                    value={formData.weekInput}
+                    onChange={(e) => handleInputChange('weekInput', e.target.value)}
+                    className="transition-all duration-200 focus:scale-[1.02]"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
+              <CardHeader>
+                <CardTitle>Advanced Date Components</CardTitle>
+                <CardDescription>Custom date and time pickers</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Date Time Picker</Label>
+                  <DateTimePicker
+                    value={formData.dateValue}
+                    onChange={(date) => handleInputChange('dateValue', date)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Calendar</Label>
+                  <div className="max-w-fit">
+                    <Calendar
+                      mode="single"
+                      selected={formData.dateValue}
+                      onSelect={(date) => handleInputChange('dateValue', date)}
+                      className="rounded-md border bg-background"
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
 
+        {/* Selection Tab */}
         <TabsContent value="selection" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
@@ -302,6 +585,7 @@ const FormElements = () => {
                       <SelectItem value="option1">Option 1</SelectItem>
                       <SelectItem value="option2">Option 2</SelectItem>
                       <SelectItem value="option3">Option 3</SelectItem>
+                      <SelectItem value="option4">Option 4</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -325,6 +609,15 @@ const FormElements = () => {
                     placeholder="Select skills..."
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <Label>Autocomplete Input</Label>
+                  <AutocompleteInput
+                    options={autocompleteOptions}
+                    placeholder="Type to search..."
+                    onSelect={(value) => handleInputChange('autocompleteValue', value)}
+                  />
+                </div>
               </CardContent>
             </Card>
 
@@ -343,6 +636,18 @@ const FormElements = () => {
                       onCheckedChange={(checked) => handleInputChange('checkboxValue', checked)}
                     />
                     <Label htmlFor="checkbox">I agree to the terms</Label>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Multiple Checkboxes</Label>
+                  <div className="space-y-2">
+                    {['Option A', 'Option B', 'Option C'].map((option, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <Checkbox id={`checkbox-${index}`} />
+                        <Label htmlFor={`checkbox-${index}`}>{option}</Label>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -380,38 +685,16 @@ const FormElements = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="feedback" className="space-y-6 animate-fade-in">
+        {/* Advanced Tab */}
+        <TabsContent value="advanced" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
               <CardHeader>
-                <CardTitle>Progress & Sliders</CardTitle>
-                <CardDescription>Progress indicators and range inputs</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Progress Bar</Label>
-                  <Progress value={progress} className="w-full" />
-                  <p className="text-sm text-muted-foreground">{progress}% complete</p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Range Slider</Label>
-                  <Slider
-                    value={formData.sliderValue}
-                    onValueChange={(value) => handleInputChange('sliderValue', value)}
-                    max={100}
-                    step={1}
-                    className="w-full"
-                  />
-                  <p className="text-sm text-muted-foreground">Value: {formData.sliderValue[0]}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
-              <CardHeader>
-                <CardTitle>Badges & Tags</CardTitle>
-                <CardDescription>Status indicators and labels</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-primary" />
+                  Badges & Feedback
+                </CardTitle>
+                <CardDescription>Status indicators and user feedback</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -419,7 +702,7 @@ const FormElements = () => {
                   <div className="flex flex-wrap gap-2">
                     <Badge variant="default">Default</Badge>
                     <Badge variant="secondary">Secondary</Badge>
-                    <Badge variant="destructive">Destructive</Badge>
+                    <Badge variant="destructive">Error</Badge>
                     <Badge variant="outline">Outline</Badge>
                   </div>
                 </div>
@@ -448,45 +731,75 @@ const FormElements = () => {
                     >
                       Warning Toast
                     </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => showToast('info', 'Info!', 'Here is some information')}
+                    >
+                      Info Toast
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
+              <CardHeader>
+                <CardTitle>Interactive Elements</CardTitle>
+                <CardDescription>Buttons and interactive components</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Button Variants</Label>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="default">Default</Button>
+                    <Button variant="secondary">Secondary</Button>
+                    <Button variant="destructive">Destructive</Button>
+                    <Button variant="outline">Outline</Button>
+                    <Button variant="ghost">Ghost</Button>
+                    <Button variant="link">Link</Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Button Sizes</Label>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm">Small</Button>
+                    <Button size="default">Default</Button>
+                    <Button size="lg">Large</Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Icon Buttons</Label>
+                  <div className="flex gap-2">
+                    <Button size="icon" variant="outline">
+                      <Heart className="h-4 w-4" />
+                    </Button>
+                    <Button size="icon" variant="outline">
+                      <Star className="h-4 w-4" />
+                    </Button>
+                    <Button size="icon" variant="outline">
+                      <Upload className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Loading States</Label>
+                  <div className="flex gap-2">
+                    <Button disabled>
+                      Loading...
+                    </Button>
+                    <Button disabled>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                      Processing
+                    </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
-
-        <TabsContent value="interactive" className="space-y-6 animate-fade-in">
-          <Card className="bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-xl border-border/50 shadow-xl">
-            <CardHeader>
-              <CardTitle>Interactive Elements</CardTitle>
-              <CardDescription>Buttons, calendars, and other interactive components</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label>Button Variants</Label>
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="default">Default</Button>
-                  <Button variant="secondary">Secondary</Button>
-                  <Button variant="destructive">Destructive</Button>
-                  <Button variant="outline">Outline</Button>
-                  <Button variant="ghost">Ghost</Button>
-                  <Button variant="link">Link</Button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Calendar</Label>
-                <div className="max-w-fit">
-                  <Calendar
-                    mode="single"
-                    selected={formData.dateValue}
-                    onSelect={(date) => handleInputChange('dateValue', date)}
-                    className="rounded-md border bg-background"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>
