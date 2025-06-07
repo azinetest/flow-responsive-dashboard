@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +12,7 @@ import ForgotPassword from "@/pages/auth/ForgotPassword";
 import TokenInvalid from "@/pages/auth/TokenInvalid";
 import Dashboard from "@/pages/Dashboard";
 import Users from "@/pages/Users";
+import UserView from "@/pages/UserView";
 import Forms from "@/pages/Forms";
 import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
@@ -37,6 +39,7 @@ const App = () => (
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="users" element={<Users />} />
+              <Route path="users/:id" element={<UserView />} />
               <Route path="forms" element={<Forms />} />
               <Route path="form-elements" element={<FormElements />} />
               <Route path="profile" element={<Profile />} />

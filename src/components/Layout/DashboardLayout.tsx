@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState } from 'react';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
@@ -6,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Menu, Home, Users, FileText, Settings, User, LogOut, Moon, Sun, Palette, LayoutDashboard, Zap } from 'lucide-react';
+import { Menu, Home, Users, FileText, Settings, User, LogOut, Moon, Sun, Palette, LayoutDashboard, Zap, Sparkles } from 'lucide-react';
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,36 +21,42 @@ const DashboardLayout = () => {
       icon: LayoutDashboard,
       href: "/dashboard",
       isActive: location.pathname === "/dashboard",
+      gradient: "from-blue-500 to-cyan-500",
     },
     {
       title: "Users",
       icon: Users,
       href: "/dashboard/users",
       isActive: location.pathname === "/dashboard/users",
+      gradient: "from-purple-500 to-pink-500",
     },
     {
       title: "Forms",
       icon: FileText,
       href: "/dashboard/forms",
       isActive: location.pathname === "/dashboard/forms",
+      gradient: "from-green-500 to-emerald-500",
     },
     {
       title: "Form Elements",
       icon: Zap,
       href: "/dashboard/form-elements",
       isActive: location.pathname === "/dashboard/form-elements",
+      gradient: "from-yellow-500 to-orange-500",
     },
     {
       title: "Profile",
       icon: User,
       href: "/dashboard/profile",
       isActive: location.pathname === "/dashboard/profile",
+      gradient: "from-indigo-500 to-blue-500",
     },
     {
       title: "Settings",
       icon: Settings,
       href: "/dashboard/settings",
       isActive: location.pathname === "/dashboard/settings",
+      gradient: "from-gray-500 to-slate-500",
     },
   ];
 
@@ -78,15 +85,31 @@ const DashboardLayout = () => {
   };
 
   const Sidebar = ({ mobile = false }) => (
-    <div className={`flex flex-col h-full ${mobile ? 'p-4' : ''} bg-gradient-to-b from-card to-card/80 backdrop-blur-xl`}>
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-border/50">
-        <div className="w-8 h-8 bg-gradient-to-br from-primary via-primary/90 to-primary/70 rounded-lg flex items-center justify-center shadow-lg">
-          <span className="text-white font-bold text-sm">D</span>
+    <div className={`flex flex-col h-full ${mobile ? 'p-4' : ''} bg-gradient-to-b from-card via-card/95 to-card/80 backdrop-blur-xl relative overflow-hidden`}>
+      {/* Animated background elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-primary/15 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
+      
+      {/* Header */}
+      <div className="relative flex items-center gap-3 px-6 py-6 border-b border-border/50">
+        <div className="relative">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary via-primary/90 to-primary/70 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300 hover:scale-110">
+            <Sparkles className="text-white h-5 w-5 animate-pulse" />
+          </div>
+          <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }} />
         </div>
-        <span className="font-semibold text-lg bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">Dashboard</span>
+        <div>
+          <span className="font-bold text-xl bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
+            Dashboard
+          </span>
+          <p className="text-xs text-muted-foreground font-medium">
+            Admin Panel v2.0
+          </p>
+        </div>
       </div>
       
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 relative z-10">
         {menuItems.map((item, index) => {
           const isActive = item.isActive;
           return (
@@ -94,37 +117,77 @@ const DashboardLayout = () => {
               key={item.title}
               to={item.href}
               onClick={() => mobile && setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 transform hover:scale-[1.02] group ${
+              className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-500 transform hover:scale-[1.02] relative overflow-hidden ${
                 isActive 
-                  ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25' 
+                  ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25 scale-[1.02]' 
                   : 'hover:bg-gradient-to-r hover:from-muted hover:to-muted/50 hover:shadow-md'
               }`}
               style={{
-                animationDelay: `${index * 50}ms`,
+                animationDelay: `${index * 100}ms`,
               }}
             >
-              <item.icon className={`h-5 w-5 transition-all duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-105'}`} />
-              <span className="font-medium">{item.title}</span>
+              {/* Animated background for active state */}
               {isActive && (
-                <div className="ml-auto w-2 h-2 bg-primary-foreground rounded-full animate-pulse" />
+                <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} opacity-90 rounded-xl`} />
+              )}
+              
+              {/* Hover effect background */}
+              <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-xl`} />
+              
+              <div className="relative z-10 flex items-center gap-3">
+                <div className={`p-1 rounded-lg ${isActive ? 'bg-white/20' : 'group-hover:bg-primary/10'} transition-all duration-300`}>
+                  <item.icon className={`h-5 w-5 transition-all duration-300 ${
+                    isActive 
+                      ? 'scale-110 text-white' 
+                      : 'group-hover:scale-105 group-hover:text-primary'
+                  }`} />
+                </div>
+                <span className={`font-medium transition-all duration-300 ${
+                  isActive ? 'text-white' : ''
+                }`}>
+                  {item.title}
+                </span>
+              </div>
+              
+              {isActive && (
+                <div className="ml-auto relative z-10">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                  <div className="absolute inset-0 w-2 h-2 bg-white rounded-full animate-ping" />
+                </div>
               )}
             </Link>
           );
         })}
       </nav>
+
+      {/* Footer with user info */}
+      <div className="relative z-10 p-4 border-t border-border/50">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-muted/30 to-muted/10 hover:from-muted/50 hover:to-muted/20 transition-all duration-300 hover:scale-[1.02]">
+          <Avatar className="h-8 w-8 ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300">
+            <AvatarImage src="/placeholder.svg" />
+            <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground text-sm">
+              JD
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium truncate">John Doe</p>
+            <p className="text-xs text-muted-foreground truncate">Administrator</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex w-64 border-r border-border/50 bg-card/50 backdrop-blur-xl">
+      <div className="hidden md:flex w-72 border-r border-border/50 bg-card/50 backdrop-blur-xl relative overflow-hidden">
         <Sidebar />
       </div>
 
       {/* Mobile Sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="p-0 w-64 bg-card/95 backdrop-blur-xl">
+        <SheetContent side="left" className="p-0 w-72 bg-card/95 backdrop-blur-xl">
           <Sidebar mobile />
         </SheetContent>
       </Sheet>
@@ -141,7 +204,7 @@ const DashboardLayout = () => {
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-64 bg-card/95 backdrop-blur-xl">
+                <SheetContent side="left" className="p-0 w-72 bg-card/95 backdrop-blur-xl">
                   <Sidebar mobile />
                 </SheetContent>
               </Sheet>

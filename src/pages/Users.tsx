@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { DataTable } from '@/components/ui/data-table';
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreVertical, UserPlus, Filter, ArrowUpDown } from 'lucide-react';
+import { MoreVertical, UserPlus, Filter, ArrowUpDown, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: number;
@@ -20,6 +20,8 @@ interface User {
 }
 
 const Users = () => {
+  const navigate = useNavigate();
+  
   const users: User[] = [
     { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', avatar: '/placeholder.svg', joinDate: '2024-01-15' },
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User', status: 'Active', avatar: '/placeholder.svg', joinDate: '2024-02-20' },
@@ -160,7 +162,11 @@ const Users = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-card/95 backdrop-blur-xl border-border/50">
-              <DropdownMenuItem className="hover:bg-primary/10 transition-colors">
+              <DropdownMenuItem 
+                className="hover:bg-primary/10 transition-colors"
+                onClick={() => navigate(`/dashboard/users/${user.id}`)}
+              >
+                <Eye className="mr-2 h-4 w-4" />
                 View profile
               </DropdownMenuItem>
               <DropdownMenuItem className="hover:bg-primary/10 transition-colors">
