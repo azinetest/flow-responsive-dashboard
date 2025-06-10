@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +18,7 @@ import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import FormElements from "@/pages/FormElements";
+import TabsDemo from "@/pages/TabsDemo";
 import Forbidden from "@/pages/errors/Forbidden";
 import ServerError from "@/pages/errors/ServerError";
 import PermissionDenied from "@/pages/errors/PermissionDenied";
