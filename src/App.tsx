@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +17,11 @@ import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import FormElements from "@/pages/FormElements";
+import Forbidden from "@/pages/errors/Forbidden";
+import ServerError from "@/pages/errors/ServerError";
+import PermissionDenied from "@/pages/errors/PermissionDenied";
+import Maintenance from "@/pages/errors/Maintenance";
+import Unauthorized from "@/pages/errors/Unauthorized";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +38,13 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/token-invalid" element={<TokenInvalid />} />
+            
+            {/* Error Routes */}
+            <Route path="/403" element={<Forbidden />} />
+            <Route path="/500" element={<ServerError />} />
+            <Route path="/401" element={<Unauthorized />} />
+            <Route path="/permission-denied" element={<PermissionDenied />} />
+            <Route path="/maintenance" element={<Maintenance />} />
             
             {/* Dashboard Routes */}
             <Route path="/dashboard" element={<DashboardLayout />}>
