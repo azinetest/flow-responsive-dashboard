@@ -66,11 +66,16 @@ const DashboardLayout = () => {
   };
 
   const colors = [
-    { name: 'Blue', value: 'blue' as const },
-    { name: 'Purple', value: 'purple' as const },
-    { name: 'Green', value: 'green' as const },
-    { name: 'Orange', value: 'orange' as const },
-    { name: 'Red', value: 'red' as const },
+    { name: 'Blue', value: 'blue' as const, color: '221.2 83.2% 53.3%' },
+    { name: 'Purple', value: 'purple' as const, color: '262.1 83.3% 57.8%' },
+    { name: 'Green', value: 'green' as const, color: '142.1 76.2% 36.3%' },
+    { name: 'Orange', value: 'orange' as const, color: '24.6 95% 53.1%' },
+    { name: 'Red', value: 'red' as const, color: '346.8 77.2% 49.8%' },
+    { name: 'Pink', value: 'pink' as const, color: '322.2 84% 60.5%' },
+    { name: 'Indigo', value: 'indigo' as const, color: '231.7 48.6% 59%' },
+    { name: 'Teal', value: 'teal' as const, color: '173.4 80.4% 40%' },
+    { name: 'Emerald', value: 'emerald' as const, color: '160.1 84.1% 39.4%' },
+    { name: 'Amber', value: 'amber' as const, color: '37.7 92.1% 50.2%' },
   ];
 
   const getColorHsl = (colorValue: string) => {
@@ -80,6 +85,11 @@ const DashboardLayout = () => {
       green: '142.1 76.2% 36.3%',
       orange: '24.6 95% 53.1%',
       red: '346.8 77.2% 49.8%',
+      pink: '322.2 84% 60.5%',
+      indigo: '231.7 48.6% 59%',
+      teal: '173.4 80.4% 40%',
+      emerald: '160.1 84.1% 39.4%',
+      amber: '37.7 92.1% 50.2%',
     };
     return colorMap[colorValue as keyof typeof colorMap] || colorMap.blue;
   };
@@ -230,25 +240,37 @@ const DashboardLayout = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-card/95 backdrop-blur-xl border-border/50">
-                  <div className="p-3">
-                    <p className="text-sm font-medium mb-3 text-center">Choose Theme Color</p>
-                    <div className="grid grid-cols-5 gap-3">
+                  <div className="p-4">
+                    <p className="text-sm font-medium mb-4 text-center">Choose Theme Color</p>
+                    <div className="grid grid-cols-5 gap-3 mb-4">
                       {colors.map((color) => (
                         <button
                           key={color.value}
                           onClick={() => setPrimaryColor(color.value)}
-                          className={`w-8 h-8 rounded-full border-2 transition-all duration-300 hover:scale-110 hover:shadow-lg ${
+                          className={`w-10 h-10 rounded-full border-2 transition-all duration-300 hover:scale-110 hover:shadow-lg relative overflow-hidden ${
                             primaryColor === color.value 
-                              ? 'border-foreground shadow-lg scale-110' 
+                              ? 'border-foreground shadow-lg scale-110 ring-2 ring-offset-2 ring-primary' 
                               : 'border-transparent hover:border-muted-foreground'
                           }`}
                           style={{ 
-                            backgroundColor: `hsl(${getColorHsl(color.value)})`,
-                            boxShadow: primaryColor === color.value ? `0 0 20px hsl(${getColorHsl(color.value)} / 0.5)` : undefined
+                            backgroundColor: `hsl(${color.color})`,
+                            boxShadow: primaryColor === color.value ? `0 0 20px hsl(${color.color} / 0.5)` : undefined
                           }}
                           title={color.name}
-                        />
+                        >
+                          {primaryColor === color.value && (
+                            <div className="absolute inset-0 bg-white/20 rounded-full animate-pulse" />
+                          )}
+                        </button>
                       ))}
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground text-center">Gradient Presets</p>
+                      <div className="flex gap-2 justify-center">
+                        <div className="w-8 h-8 rounded-lg gradient-rainbow cursor-pointer hover:scale-110 transition-transform" title="Rainbow" />
+                        <div className="w-8 h-8 rounded-lg gradient-sunset cursor-pointer hover:scale-110 transition-transform" title="Sunset" />
+                        <div className="w-8 h-8 rounded-lg gradient-ocean cursor-pointer hover:scale-110 transition-transform" title="Ocean" />
+                      </div>
                     </div>
                   </div>
                 </DropdownMenuContent>
